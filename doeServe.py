@@ -13,6 +13,7 @@ from datetime import datetime
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from doebase.OptDes import doeRequest
+from doebase.synbioParts import doeGetSBOL
 
 app = Flask(__name__)
 api = Api(app)
@@ -54,8 +55,30 @@ class RestQuery( Resource ):
                 'seed': diagnostics['seed']}
         return jsonify( stamp(data, 1) )
 
+class RestParts( Resource ):
+    """ REST interface that generates the Design.
+        Avoid returning numpy or pandas object in
+        order to keep the client lighter.
+    """
+    def post(self):
+        file_parts = request.files['parts']
+        file_genes = request.files['genes']
+        size = int( request.values.get('size') )
+        diagnostics = doeGetSBOL(file_parts, ffile_genes, size)
+        data = {'M': diagnostics['M'].tolist(),
+                'J': diagnostics['J'],
+                'pow': diagnostics['J'],
+                'rpv': diagnostics['J'],
+                'names': diagnostics['names'],
+                'libsize': diagnostics['libsize'],
+                'seed': diagnostics['seed'],
+                'sbol': diagnostics['sbol']}
+        return jsonify( stamp(data, 1) )
+
+
 api.add_resource(RestApp, '/REST')
 api.add_resource(RestQuery, '/REST/Query')
+api.add_resource(RestParts, '/REST/Parts')
 
 if __name__== "__main__":  
     debug = os.getenv('USER') == 'pablo'
