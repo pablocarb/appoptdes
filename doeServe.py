@@ -64,7 +64,7 @@ class RestParts( Resource ):
         file_parts = request.files['parts']
         file_genes = request.files['genes']
         size = int( request.values.get('size') )
-        diagnostics = doeGetSBOL(file_parts, ffile_genes, size)
+        diagnostics = doeGetSBOL(file_parts, file_genes, size)
         data = {'M': diagnostics['M'].tolist(),
                 'J': diagnostics['J'],
                 'pow': diagnostics['J'],

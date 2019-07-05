@@ -18,7 +18,7 @@ import os
 import csv
 
 url = 'http://127.0.0.1:8989/REST'
-url = 'http://optbiodes.synbiochem.co.uk/REST'
+#url = 'http://optbiodes.synbiochem.co.uk/REST'
 
 def testApp(url=url):
     r = requests.get( url )
@@ -40,6 +40,29 @@ def testUpload(url=url):
             cw.writerow( row )
     print( 'Size:', res['data']['libsize'], 'Efficiency:', res['data']['J'] )
 
+def testUploadSbol(url=url):
+    parts = os.path.join( 'test', 'RefParts.csv' )
+    genes = os.path.join( 'test', 'GeneParts.csv' )
+    files = { 
+        'parts': open(parts, 'rb' ),
+        'genes': open(genes, 'rb')
+    }
+    values = {'size': 48}
+    r = requests.post( os.path.join(url, 'Parts' ), files=files, data=values )
+    res = json.loads( r.content.decode('utf-8') )
+    M = res['data']['M']
+    out = os.path.join( 'test', 'DoE_run2.csv')
+    with open(out, 'w') as h:
+        cw = csv.writer(h)      
+        cw.writerow( res['data']['names'] )
+        for row in M:
+            cw.writerow( row )
+    out2 = os.path.join('test', 'out.sbol')
+    open(out2, 'w').write(res['data']['sbol'])
+    print( 'Size:', res['data']['libsize'], 'Efficiency:', res['data']['J'] )
+
+
 if __name__ == '__main__':
     testApp()
     testUpload()
+    testUploadSbol()
