@@ -13,10 +13,6 @@ if [ "$USER" == "pablo" ]; then
     DEPLOY=false
 fi
 
-# Stop and delete proxy containers
-docker stop nginx-proxy
-docker rm nginx-proxy
-
 # Stop an delete doe containers
 docker stop doe
 docker rm doe
@@ -34,6 +30,10 @@ fi
 
 # Build new image
 docker build -t doe .
+
+# Stop and delete proxy containers in order to register the new app
+docker stop nginx-proxy
+docker rm nginx-proxy
 
 # Run container
 if [ "$DEPLOY" == "true" ]; then
