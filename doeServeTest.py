@@ -17,8 +17,8 @@ import json
 import os
 import csv
 
-url = 'http://127.0.0.1:8989/REST'
-#url = 'http://optbiodes.synbiochem.co.uk/REST'
+#url = 'http://127.0.0.1:8989/REST'
+url = 'http://optbiodes.synbiochem.co.uk/REST'
 
 def testApp(url=url):
     r = requests.get( url )
